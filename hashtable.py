@@ -28,9 +28,9 @@ class HashTable:
         THIS IS COMPLETE, we use an internal python-given hash function called "hash()"
         '''
 
-        return hashlib.sha256(key.encode())
+        # return hashlib.sha256(key.encode())
 
-        # return hash(key)
+        return hash(key)
 
 
     def _hash_djb2(self, key):
@@ -62,10 +62,15 @@ class HashTable:
 
         index = self._hash_mod(key)
 
-        if self.storage(index) is not None:
-            print("ERROR: Key in use")
-        else:
-            self.storage(key) = value
+        if self.storage[index] is not None:
+            print("Collision occured: adding to pre-existing linked list of key-value pairs")
+            next_linked_pair = LinkedPair(key, value)
+            next_linked_pair.next = self.storage[index]
+
+        else: # initiate a new linked list of key-value pairs to be stored at the index of the list (now = [None] )
+            zeroeth_linked_pair = LinkedPair(key, value)
+            print(self.storage[index])
+            self.storage[index] = zeroeth_linked_pair
 
 
 
@@ -78,8 +83,8 @@ class HashTable:
 
         index = self._hash_mod(key)
 
-        if self.storage(index) is not None:
-            self.storage(index) = None
+        if self.storage[index] is not None:
+            self.storage[index] = None
         else:
             print("WARNING: Key is not found")
 
@@ -92,7 +97,7 @@ class HashTable:
         '''
         index = self._hash_mod(key)
 
-        return self.storage(index)
+        return self.storage[index]
 
 
     def resize(self):
@@ -109,33 +114,31 @@ class HashTable:
             self.insert(old_key.key, old_key.value)
         
 
-hashtable = HashTable(1)
-hashtable.insert()
 
-# if __name__ == "__main__":
-#     ht = HashTable(2)
+if __name__ == "__main__":
+    ht = HashTable(2)
 
-#     ht.insert("line_1", "Tiny hash table")
-#     ht.insert("line_2", "Filled beyond capacity")
-#     ht.insert("line_3", "Linked list saves the day!")
+    ht.insert("line_1", "Tiny hash table")
+    ht.insert("line_2", "Filled beyond capacity")
+    ht.insert("line_3", "Linked list saves the day!")
 
-#     print("")
+    print("")
 
-#     # Test storing beyond capacity
-#     print(ht.retrieve("line_1"))
-#     print(ht.retrieve("line_2"))
-#     print(ht.retrieve("line_3"))
+    # Test storing beyond capacity
+    print(ht.retrieve("line_1"))
+    print(ht.retrieve("line_2"))
+    print(ht.retrieve("line_3"))
 
-#     # Test resizing
-#     old_capacity = len(ht.storage)
-#     ht.resize()
-#     new_capacity = len(ht.storage)
+    # Test resizing
+    old_capacity = len(ht.storage)
+    ht.resize()
+    new_capacity = len(ht.storage)
 
-#     print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
-#     # Test if data intact after resizing
-#     print(ht.retrieve("line_1"))
-#     print(ht.retrieve("line_2"))
-#     print(ht.retrieve("line_3"))
+    # Test if data intact after resizing
+    print(ht.retrieve("line_1"))
+    print(ht.retrieve("line_2"))
+    print(ht.retrieve("line_3"))
 
-#     print("")
+    print("")
